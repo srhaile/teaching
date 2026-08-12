@@ -1,0 +1,13 @@
+name: intror
+title: IntroR
+username: shaile
+account: shaile
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019f5cb9-8f4c-750f-a269-f6f564c8ea6e
+bundleId:
+url: https://connect.posit.cloud/shaile/content/019f5cb9-8f4c-750f-a269-f6f564c8ea6e
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: primary_beeswarm.jpg|sample_data.csv|style.css

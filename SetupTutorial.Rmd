@@ -1,0 +1,46 @@
+---
+title: "How to set up the R tutorial"
+author: "SRH"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: blue
+fontsize: 11pt
+header-includes:
+  - \usepackage[default]{sourcesanspro}
+  - \usepackage[T1]{fontenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# I do not have R or R Studio installed, and I don't need them.
+
+***Option 1***: Load the tutorial on "Posit Connect Cloud"
+
+Go to [https://shaile-intror.share.connect.posit.cloud/](https://shaile-intror.share.connect.posit.cloud/).
+
+***Option 2***: Use the cloud version of R Studio.
+
+- Go to [https://login.posit.cloud/](https://login.posit.cloud/).
+- Register with your email address;
+- Select the “Free Cloud” subscription option;
+- Go to your workspace and click on New Project (top right corner), then choose New RStudio Project.
+- Upload the document `IntroR.Rmd`. In the bottom right panel, find the option to "Upload File".
+- Open the document and hit "Run Document".
+  - R may ask you to install packages. If so, click ok.
+  - The browser may ask if pop-ups are allowed. If so, click ok.
+
+# I do not have R or R Studio installed, and I don't mind installing them.
+
+- Download and install R: Go to [https://stat.ethz.ch/CRAN/](https://stat.ethz.ch/CRAN/) and choose the option for your operating system.
+- Download and install R Studio: Go to [https://docs.posit.co/ide/user/](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads), and choose the option for your operating system.
+- Open the document `IntroR.Rmd`. 
+- R may ask you to install packages. If so, click ok.
+- Open the document and hit "Run Document".
+
+# I have R and R Studio installed.
+
+- Open the document `IntroR.Rmd`. 
+- R may ask you to install packages. If so, click ok.
+- Open the document and hit "Run Document".
