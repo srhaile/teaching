@@ -1,6 +1,6 @@
 ---
 title: "Statistical Methods for Randomized Controlled Trials: a short tutorial"
-date: "2026-07-20, Version 0.5"
+date: "2026-08-20, Version 0.7"
 description: "A short of overview of statistical methods needed to analyze randomized controlled trials."
 output: 
   learnr::tutorial:
@@ -271,7 +271,7 @@ mod <- lm(epworth2 ~ trt, data = didgeridoo)
 tbl_regression(mod, conf.int = TRUE)
 ```
 
-The results from linear regression may not be exactly the same as those from the t-test, but they are quite similar. Additionally, linear regression allows us to further adjust for baseline characteristics, e.g. baseline ESS. 
+The results from linear regression may not be exactly the same as those from the t-test, but they are quite similar. Additionally, linear regression allows us to further adjust for other participant characteristics, e.g. baseline ESS. 
 
 ```{r linregadj, exercise = TRUE}
 mod <- lm(epworth2 ~ trt + epworth1, data = didgeridoo) 
@@ -279,6 +279,11 @@ tbl_regression(mod, conf.int = TRUE)
 ```
 
 After adjustment for baseline ESS, the observed treatment effect is -2.7 (95% CI -5.1 to -0.35, p = 0.027), showing a modest and statistically significant effect of didgeridoo playing on sleep apnea. These are essentially the results that [Puhan 2006](https://doi.org/10.1136/bmj.38705.470590.55) reported, though they examined change scores.
+
+```{r changescores}
+t.test((epworth2 - epworth1) ~ trt, data = didgeridoo)
+```
+
 
 > Zimmerman, D W 2004 A note on preliminary tests of equality of variances. British Journal of Mathematical and Statistical Psychology, 57(1): 173–181. DOI:10.1348/000711004849222
 
@@ -441,7 +446,7 @@ To remember this way of getting the odds ratio, you multiply the number on the d
 
 To compare these rates with a hypothesis test, we could use a chi-square test, `chisq.test()`. In order to run this test in R, we first need to set up the 2x2 table. Additionally, since `chisq.test()` only reports a p-value, we need to find another way to get the odds ratio, which we can do with the `epitools` package.
 
-```{r chisq}
+```{r chisq, echo = TRUE}
 library(epitools)
 tab <- with(birthweight, table(low, smoke))
 tab
@@ -451,11 +456,11 @@ oddsratio(tab)
 
 There are small differences between the output of `chisq.test()` and `oddsratio()` here, but that's because one uses a "continuity correction" by default and the other does not.
 
-```{r chisq2}
+```{r chisq2, echo = TRUE}
 oddsratio(tab, correction = TRUE)
 ```
 
-This approach is admittedly a bit tedious. We could also use logistic regression, which can be done with the `glm()` function, and the option `family = binomial`. Also, when we look at the regression coefficients, we need to exponentiate them, $e^\hat{\beta}$, to get odds ratios.
+This approach is admittedly a bit tedious. We could also use logistic regression, which can be done with the `glm()` function, and the option `family = binomial`. Also, when we look at the regression coefficients, we need to exponentiate them, $e^{\widehat{\beta}}$, to get odds ratios.
 
 ```{r logistic, echo = TRUE}
 mod <- glm(low ~ smoke, data = birthweight, family = binomial)
@@ -469,8 +474,25 @@ mod <- glm(low ~ smoke + age + race, data = birthweight, family = binomial)
 tbl_regression(mod, conf.int = TRUE, exponentiate = TRUE)
 ```
 
+## Choice of statistical test
 
+If you've been in a statistical methods course, you may remember that there were many methods presented. How do we know which one to pick?
 
+For a relatively simple randomized clinical trial with 
+
+- 2 treatment arms
+- Participants are independent
+- Primary endpoint at 1 timepoint, either (approximately) continuous or binary
+
+we have the following options:
+
+**type of outcome** | **effect estimate** | **not adjusted** | **adjusted** 
+--|--|--|--
+**continuous** * | mean difference | $t$-test | linear regression
+**binary** (yes / no) | odds ratio | $\chi$-square test | logistic regression
+... | ... | ... | ...
+
+Selection of statistical methods is however usually more complicated than this! A competent statistician can help you determine the most appropriate methods for your study.
 
 
 
