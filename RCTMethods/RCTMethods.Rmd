@@ -73,7 +73,7 @@ There are many potential study designs (e.g. two-arm parallel group, more than 2
 
 Along the way, we'll cover p-values and confidence intervals. We do not aim to provide a comprehensive overview to statistical methodology, but to get you started with some methods that are applicable in many common situations.
 
-*This tutorial is a work in progress! Please contact me at [sarah.haile@uzh.ch](mailto:sarah.haile@uzh.ch) if you have an comments or questions.*
+*This tutorial is a work in progress! Please contact me at [sarah.haile@uzh.ch](mailto:sarah.haile@uzh.ch) if you have any comments or questions.*
 
 > Radtke T, von Wyl V, Haile SR, Rohrmann S, Frei A, Puhan MA. Evidence-based coaching of core competencies in epidemiology, using the framework of randomized controlled trials: the Zurich approach. Int J Epidemiol. 2024 Apr 11;53(3):dyae075. doi: 10.1093/ije/dyae075.
 

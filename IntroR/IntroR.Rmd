@@ -125,7 +125,7 @@ We'll finish with a few notes on topics like 1) importing data with `readr`, 2),
 
 In other statistics or data analysis courses, you may have seen older ways of programming in R ("base R") that do not require `dplyr`, `ggplot2`, or any other packages in the so-called `tidyverse`. We use these packages here because much of the documentation and examples found online (and of course, via LLMs) comes from these packages. Fortunately, this code is also (relatively) easy to read, even if you don't have much experience in R yet.
 
-*This tutorial is a work in progress! Please contact me at [sarah.haile@uzh.ch](mailto:sarah.haile@uzh.ch) if you have an comments or questions.*
+*This tutorial is a work in progress! Please contact me at [sarah.haile@uzh.ch](mailto:sarah.haile@uzh.ch) if you have any comments or questions.*
 
 > Radtke T, von Wyl V, Haile SR, Rohrmann S, Frei A, Puhan MA. Evidence-based coaching of core competencies in epidemiology, using the framework of randomized controlled trials: the Zurich approach. Int J Epidemiol. 2024 Apr 11;53(3):dyae075. doi: 10.1093/ije/dyae075.
 
