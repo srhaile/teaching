@@ -14,7 +14,7 @@ urlcolor: blue
 ```{r knitrsetup, include=FALSE}
 library(learnr)
 library(gradethis)
-knitr::opts_chunk$set(echo = FALSE, exercise.checker = grade_learnr)
+knitr::opts_chunk$set(echo = FALSE, exercise.checker = grade_learnr, warning = FALSE)
 ```
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -179,7 +179,7 @@ grade_this_code()
 
 We can also save these height and weight values with an arrow, `<-`, and use them later for the calculation.
 
-```{r calcletter}
+```{r calcletter, echo = TRUE}
 wt <- 85
 ht <- 180
 wt / ((ht / 100) ^2)
@@ -191,7 +191,7 @@ But what if we had height and weight for, say 3 people?
 - Person 2: weight 90, height 190
 - Person 3: weight 95, height 200
 
-It would be annoying, and error-prone, to have to calculate each BMI separately. To save all 3 heights or weights at once, we use a vector, by putting all 3 values inside `c()`, separated by commas: `c(85, 90, 95)`. 
+It would be annoying, not to mention error-prone, to have to calculate each BMI separately. To save all 3 heights or weights at once, we use a vector, by putting all 3 values inside `c()`, separated by commas: `c(85, 90, 95)`. 
 
 ```{r vector, exercise = TRUE}
 wt <- c(...)
@@ -254,7 +254,7 @@ mydata
 
 ## Trial data
 
-Now, we have just completed a randomized clinical trial. 
+Now, imagine we have just completed a randomized clinical trial. 
 
 - **Population**: students in this course
 - **Intervention**: watching a concentration video for 5 minutes
@@ -389,7 +389,7 @@ grade_this_code()
 
 ### Q: How does age look?
 
-For continuous (or mostly continuous) outcomes, it's helpful to look at all individual reported, not just mean or median values. We can also use `count()` for this.
+For continuous (or mostly continuous) outcomes, such as age (`age_today`), it's helpful to look at all individual reported values, not just mean or median values. We can also use `count()` for this.
 
 ```{r age, exercise = TRUE}
 
@@ -486,7 +486,7 @@ sm |>
   select(trt, age, gender, video_games) |> 
   mutate(video_games = fct_recode(video_games, "<30" = "<30 minutes per day")) |> 
   tbl_summary(by = trt,
-              label = list(video_games = "video games (minute / day)",
+              label = list(video_games = "video games (minutes / day)",
                            gender ~ "gender (F)"),
               value = list(gender ~ "F"), 
               digits = list(age ~ 1),
@@ -546,18 +546,19 @@ ggplot(aes(x = flipper_length_mm, y = body_mass_g,
 
 Adding a few other options, we have a plot that could be used later in a publication or presentation.
 
-```{r penguinspublication, echo = TRUE}
+```{r penguinspublication, echo = TRUE, fig.cap = "publication-ready figure", fig.height = 6, fig.width = 6}
 library(ggplot2)
-theme_set(theme_bw(base_size = 16))
+theme_set(theme_bw(base_size = 12))
 ggplot(aes(x = flipper_length_mm, y = body_mass_g, 
-           color = species), 
+           color = species, shape = species), 
        data = penguins) +
   geom_point() +
   xlab("flipper length (mm)") + 
   ylab("body mass (g)") +
-  guides(color = guide_legend(NULL)) +
+  guides(color = guide_legend(NULL),
+         shape = guide_legend(NULL)) +
   theme(legend.position = "inside", 
-        legend.position.inside = c(0.85, 0.15))
+        legend.position.inside = c(0.15, 0.9))
 ```
 
 Let's see how to make a boxplot.
