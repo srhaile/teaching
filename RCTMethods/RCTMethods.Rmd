@@ -126,39 +126,49 @@ Either way, we get the same results: average / mean ESS in the didgeridoo group 
 7.4 - 9.6
 ```
 
-## Clinical / practical relevance or statistical significant?
+## Clinically / practically relevant or statistical significant?
 
-We have just compared ESS in the didgeridoo study as the average difference between the two groups. Such a comparison is often called an *effect size* or *treatment effect*. It quantifies the association between the treatment and outcome, and describes clinical or practical relevance.
+We have just compared ESS in the didgeridoo study as the average difference between the two groups. Such a comparison is often called an **effect size** or *treatment effect*. It quantifies the observed association between the treatment and outcome, and as such, gives us information about the clinical or practical relevance of the intervention of didgeridoo lessons on the outcome ESS.
 
 Now, if we conducted the didgeridoo study again, even in the same study center and with the same didgeridoo instructor, we would not get exactly the same result, would we? Perhaps it would be close, but it's unlikely to be exactly the same. We might like to guess what other possible treatment effects would be plausible. For that, we need a *confidence interval* (CI), which describes a range of most plausible treatment effects given our observed data, describing clinical or practical relevance. If a treatment effect corresponding to no difference (e.g. mean difference of 0) is included in the range of the CI, we generally say that the study results are consistent with no difference between the treatment arms.
 
-A CI usually has some percent value attached to it, most often we see a *95% confidence interval*. What does that mean? To really understand CIs, we need to imagine that we conducted our study many many times. A 95% CI means that if we conducted our study 100 times, 95 of the confidence intervals from those studies would contain the population-level treatment effect. But for any one study, we do not know whether the true treatment effect is outside the CI, at the lower end, in the middle or in the upper end. Nevertheless, because we are working with 95% CIs, we think the true effect is likely to be somewhere in the CI for our study.
+You may have seen the phrase "95% confidence interval" before. Why can't we just say "confidence interval"? The "95%" part quantifies *how* confident we want to be that our confidence interval contains the true population-level treatment effect. 
 
-```{r ci, fig.height = 5, fig.width = 5}
-set.seed(20260718)
+```{r ci-prep, fig.height = 5, fig.width = 5}
+set.seed(20260825)
 simfn <- function(n = 50){
-  simdat <- crossing(id = 1:n,
-                   trt = 0:1) |> 
-  mutate(y = rnorm(n(), ifelse(trt == 0, 50, 58), 16),
+  simdat <- crossing(id = 1:n) |> 
+  mutate(trt = rep(0:1, each = n / 2),
+          y = rnorm(n(), 30 + trt * 8, 10),
          y = round(y))
   mod <- lm(y ~ trt, data = simdat)
-  c(coef(mod)[2], confint(mod)[2, ])
+  out <- tidy(mod, conf.int = TRUE)
+  out
 }
+
+```
+
+We take the mean and get `r mean(y)`. However, `r mean(y)` is unlikely to be the after sit-to-stand performance of all the clinic participants. It's just one possible sample after all. 
+
+```{r ci, fig.height = 5, fig.width = 5}
 
 res <- as_tibble(t(replicate(20, simfn(50)))) |> 
   mutate(sim = 1:n())
 
-ggplot(aes(sim, trt, 
-           ymin = `2.5 %`, ymax = `97.5 %`),
+ggplot(aes(sim, mean,
+           ymin = `lb`, ymax = `ub`),
        data = res) +
   geom_pointrange() +
-  geom_hline(yintercept = 8, color = "blue", linetype = 2) +
+  geom_hline(yintercept = 30, color = "blue", linetype = 2) +
   coord_flip() +
   scale_x_continuous(breaks = NULL) +
-  xlab(NULL) + ylab("Estimated treatment effect\nand 95% confidence interval") +
+  xlab(NULL) + ylab("Estimated average 1-minute sit-to-stand\nand 95% confidence interval") +
   theme_bw(base_size = 14)
 
 ```
+
+To really understand CIs, we need to imagine that we conducted our study many many times. A 95% CI means that if we conducted our study 100 times, 95 of the confidence intervals from those studies would contain the population-level treatment effect. But for any one study, we do not know whether the true treatment effect is outside the CI, at the lower end, in the middle or in the upper end. Nevertheless, because we are working with 95% CIs, we think the true effect is likely to be somewhere in the CI for our study.
+
 
 And finally, we have p-values, a measure of *statistical significance*. Now imagine we have an intervention which does not affect the endpoint compared to the control arm. 
 
