@@ -25,6 +25,7 @@ library(ggplot2)
 library(gtsummary)
 library(broom); library(broom.helpers)
 library(readr)
+library(purrr)
 theme_set(theme_bw(base_size = 14))
 
 didgeridoo <- read_csv("alphorn.csv") |> 
@@ -76,6 +77,8 @@ Along the way, we'll cover p-values and confidence intervals. We do not aim to p
 *This tutorial is a work in progress! Please contact me at [sarah.haile@uzh.ch](mailto:sarah.haile@uzh.ch) if you have any comments or questions.*
 
 > Radtke T, von Wyl V, Haile SR, Rohrmann S, Frei A, Puhan MA. Evidence-based coaching of core competencies in epidemiology, using the framework of randomized controlled trials: the Zurich approach. Int J Epidemiol. 2024 Apr 11;53(3):dyae075. doi: 10.1093/ije/dyae075.
+
+This work is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nd.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">
 
 
 ## Summarizing continuous outcomes
@@ -130,47 +133,46 @@ Either way, we get the same results: average / mean ESS in the didgeridoo group 
 
 We have just compared ESS in the didgeridoo study as the average difference between the two groups. Such a comparison is often called an **effect size** or *treatment effect*. It quantifies the observed association between the treatment and outcome, and as such, gives us information about the clinical or practical relevance of the intervention of didgeridoo lessons on the outcome ESS.
 
-Now, if we conducted the didgeridoo study again, even in the same study center and with the same didgeridoo instructor, we would not get exactly the same result, would we? Perhaps it would be close, but it's unlikely to be exactly the same. We might like to guess what other possible treatment effects would be plausible. For that, we need a *confidence interval* (CI), which describes a range of most plausible treatment effects given our observed data, describing clinical or practical relevance. If a treatment effect corresponding to no difference (e.g. mean difference of 0) is included in the range of the CI, we generally say that the study results are consistent with no difference between the treatment arms.
+Now, if we conducted the didgeridoo study again, even in the same study center and with the same didgeridoo instructor, we would not get exactly the same result, would we? Perhaps it would be close, but it's unlikely to be exactly the same. We might like to guess what other possible treatment effects would be plausible. For that, we need a **confidence interval** (CI), which describes a range of most plausible treatment effects given our observed data, describing clinical or practical relevance. If a treatment effect corresponding to no difference (e.g. mean difference of 0) is included in the range of the CI, we generally say that the study results are consistent with no difference between the treatment arms.
 
 You may have seen the phrase "95% confidence interval" before. Why can't we just say "confidence interval"? The "95%" part quantifies *how* confident we want to be that our confidence interval contains the true population-level treatment effect. 
 
 ```{r ci-prep, fig.height = 5, fig.width = 5}
-set.seed(20260825)
 simfn <- function(n = 50){
   simdat <- crossing(id = 1:n) |> 
   mutate(trt = rep(0:1, each = n / 2),
           y = rnorm(n(), 30 + trt * 8, 10),
          y = round(y))
   mod <- lm(y ~ trt, data = simdat)
-  out <- tidy(mod, conf.int = TRUE)
+  out <- tidy(mod, conf.int = TRUE) |> 
+    filter(term == "trt")
   out
 }
 
+set.seed(202612345)
+res <- tibble(sim = 1:20,
+              n = 50) |> 
+  mutate(out = map(n, simfn)) |> 
+  unnest(out)
+
 ```
 
-We take the mean and get `r mean(y)`. However, `r mean(y)` is unlikely to be the after sit-to-stand performance of all the clinic participants. It's just one possible sample after all. 
+Suppose we conduct the same trial 20 times for an intervention that has a true effect of 8 points on the outcome of interest. The plot below shows the estimated treatment effects for each of those studies, as well as the corresponding 95% confidence intervals. From these 20 studies, almost all confidence intervals, that is 19/20 or 95%, contain the true population-level treatment effect, so we can be reasonably confident that the CI we observed from our single trial includes the true effect we would like to estimate.
 
 ```{r ci, fig.height = 5, fig.width = 5}
-
-res <- as_tibble(t(replicate(20, simfn(50)))) |> 
-  mutate(sim = 1:n())
-
-ggplot(aes(sim, mean,
-           ymin = `lb`, ymax = `ub`),
+ggplot(aes(sim, estimate,
+           ymin = conf.low, ymax = conf.high),
        data = res) +
   geom_pointrange() +
-  geom_hline(yintercept = 30, color = "blue", linetype = 2) +
+  geom_hline(yintercept = 8, color = "blue", linetype = 2) +
   coord_flip() +
   scale_x_continuous(breaks = NULL) +
-  xlab(NULL) + ylab("Estimated average 1-minute sit-to-stand\nand 95% confidence interval") +
+  xlab(NULL) + ylab("Estimated treatment effect\nand 95% confidence interval") +
   theme_bw(base_size = 14)
 
 ```
 
-To really understand CIs, we need to imagine that we conducted our study many many times. A 95% CI means that if we conducted our study 100 times, 95 of the confidence intervals from those studies would contain the population-level treatment effect. But for any one study, we do not know whether the true treatment effect is outside the CI, at the lower end, in the middle or in the upper end. Nevertheless, because we are working with 95% CIs, we think the true effect is likely to be somewhere in the CI for our study.
-
-
-And finally, we have p-values, a measure of *statistical significance*. Now imagine we have an intervention which does not affect the endpoint compared to the control arm. 
+And finally, we have **p-values**, a measure of *statistical significance*. Now imagine we have an intervention which does not affect the endpoint compared to the control arm. 
 
 ```{r quizpvalue}
 quiz(
@@ -188,9 +190,8 @@ quiz(
 )
 ```
 
-If the difference is small, and we think that most studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "not suprising", and conclude no difference. 
-
-If the difference is larger, and we think that few studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "suprising", and conclude there is a difference between the treatment arms.
+- If the difference is small, and we think that most studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "not suprising", and conclude no difference. 
+- If the difference is large, and we think that few studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "suprising", and conclude there is a difference between the treatment arms.
 
 P-values quantify how surprised we would be by the results, if we assume that there is no difference between intervention and control. 
 
@@ -202,6 +203,7 @@ In regulatory settings, we usually say our level of surprise should be no more t
 Power and sample size considerations are generally based on this simple decision rule. In other situations, we do not need clear predefined rules for when the study results are considered "positive". Then it may be more helpful to consider p-values as measures of evidence.
 
 ![Instead of reporting a binary yes/no test outcome, the results sections of scientific papers should rather report the exact P-values and interpret that ‘there was no/weak/moderate/strong/very strong evidence’ for a certain finding or effect, depending on approximate ranges into which the actual P-value falls (Muff et al 2022)](images\pvalue_evidence.jpg)
+
 Regardless of how we interpret p-values, they are measures of statistical significance only, and make no statement about the clinical relevance of the observed results. In very small studies, p-values will be mostly not significant, even if the results are practically meaningful. On the other hand, in very large studies, p-values will generally be significant, even if the observed effects are very small.
 
 ```{r quiztheory}
@@ -221,6 +223,8 @@ quiz(
   )
 )
 ```
+
+> Rovetta A, Mansournia MA, Stovitz SD, Adams WM, Greenland S. Interpreting p values and interval estimates based on practical relevance: guidance for the sports medicine clinician. Br J Sports Med. 2025 Dec 29;59(24):bjsports-2024-109357. doi: 10.1136/bjsports-2024-109357.
 
 > Greenland S, Senn SJ, Rothman KJ, Carlin JB, Poole C, Goodman SN, Altman DG. Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations. Eur J Epidemiol. 2016 Apr;31(4):337-50. doi: 10.1007/s10654-016-0149-3.
 
