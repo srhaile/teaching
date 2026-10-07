@@ -1,6 +1,6 @@
 ---
 title: "Statistical Methods for Randomized Controlled Trials: a short tutorial"
-date: "2026-08-20, Version 0.7"
+date: 2026-10-07
 description: "A short of overview of statistical methods needed to analyze randomized controlled trials."
 output: 
   learnr::tutorial:
