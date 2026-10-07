@@ -135,7 +135,7 @@ We have just compared ESS in the didgeridoo study as the average difference betw
 
 Now, if we conducted the didgeridoo study again, even in the same study center and with the same didgeridoo instructor, we would not get exactly the same result, would we? Perhaps it would be close, but it's unlikely to be exactly the same. We might like to guess what other possible treatment effects would be plausible. For that, we need a **confidence interval** (CI), which describes a range of most plausible treatment effects given our observed data, describing clinical or practical relevance. If a treatment effect corresponding to no difference (e.g. mean difference of 0) is included in the range of the CI, we generally say that the study results are consistent with no difference between the treatment arms.
 
-You may have seen the phrase "95% confidence interval" before. Why can't we just say "confidence interval"? The "95%" part quantifies *how* confident we want to be that our confidence interval contains the true population-level treatment effect. 
+You may have seen the phrase "95% confidence interval" before. Why can't we just say "confidence interval"? The "95%" part quantifies *how* confident we want to be that our confidence interval contains the true population-level treatment effect. However, it's not very often you will see anything except a 95% confidence interval.
 
 ```{r ci-prep, fig.height = 5, fig.width = 5}
 simfn <- function(n = 50){
@@ -193,9 +193,9 @@ quiz(
 - If the difference is small, and we think that most studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "not suprising", and conclude no difference. 
 - If the difference is large, and we think that few studies would give us results at least this size or larger (assuming no difference between intervention and control), we say that the results are "suprising", and conclude there is a difference between the treatment arms.
 
-P-values quantify how surprised we would be by the results, if we assume that there is no difference between intervention and control. 
+P-values quantify how surprised we would be by the results, if we assume that there is no difference between intervention and control. Imagine for a moment that a friend drops by with a 2 sets of 10 dice, giving you the 10 blue dice, and keeping the 10 red dice for himself. "The game is easy. Whoever gets the most 6s out of the 10 dice wins." You roll your blue dice and get exactly one 6s. He rolls his red dice and gets 5 6s! That's amazing! Later you think about it again: if his red dice were fair dice, 5 6s is a really surprising outcome. Was he cheating? How surprising is it exactly, to get 5 6s from a set of 10 fair dice? After a bit of calculation, you discover that getting 5 or more 6s from 10 dice only should happen about 1.5% of the time, assuming you have fair dice. You're not sure, but it looks like he had some sort of special dice, or was very very lucky. Maybe you'll have to get him to try the game again another day to find out which it is.
 
-In regulatory settings, we usually say our level of surprise should be no more than 5% ("significance level"):
+Back to clinical trials: In regulatory settings, we usually say our level of surprise should be no more than 5% ("significance level"):
 
 - If $p<0.05$, that is, if the observed results would be expected no more than 5% of the time when there is actually no difference between intervention and control, then we say the results are *statistically significant".
 - If $p\geq0.05$, that is, if the observed results would be expected more than 5% of the time when there is actually no difference between intervention and control, then we say the results are *not statistically significant".
